@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">WHATCAM</string>
+
+    <string name="capture">Capture</string>
+    <string name="preview_area">Preview</string>
+    <string name="image_preview_description">Preview Description</string>
+
 </resources>

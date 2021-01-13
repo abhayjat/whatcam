@@ -1,7 +1,9 @@
 package com.example.whatcam;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -23,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.mlkit.vision.common.InputImage;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
@@ -38,6 +41,9 @@ public class CameraActivity extends AppCompatActivity {
     LinearLayout captureImage;
 
     static byte[] outputImage;
+    static InputImage image;
+    static Integer rotationDegress;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +51,7 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         outputImage = null;
+
         mPreviewView = findViewById(R.id.camera);
         captureImage = findViewById(R.id.captureImage);
 
@@ -73,8 +80,7 @@ public class CameraActivity extends AppCompatActivity {
             hdrImageCaptureExtender.enableExtension(cameraSelector);
         }
 
-        final ImageCapture imageCapture = builder
-                .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).build();
+        final ImageCapture imageCapture = builder.setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).build();
 
 
         preview.setSurfaceProvider(mPreviewView.createSurfaceProvider());
@@ -85,11 +91,12 @@ public class CameraActivity extends AppCompatActivity {
             public void onClick(View v) {
                 imageCapture.takePicture(executor, new ImageCapture.OnImageCapturedCallback() {
                     @Override
-                    public void onCaptureSuccess(@NonNull ImageProxy image) {
-                        outputImage = toBitmap(image);
+                    public void onCaptureSuccess(@NonNull ImageProxy imageProxy) {
+                        rotationDegress = imageProxy.getImageInfo().getRotationDegrees();
+                        outputImage = toBitmap(imageProxy);
                         Intent intent = new Intent(CameraActivity.this, RecognitionActivity.class);
                         startActivity(intent);
-                        super.onCaptureSuccess(image);
+
                     }
                 });
             }
@@ -97,6 +104,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private byte[] toBitmap(ImageProxy imageProxy) {
+//
         ByteBuffer byteBuffer = imageProxy.getPlanes()[0].getBuffer();
         byteBuffer.rewind();
         byte[] bytes = new byte[byteBuffer.capacity()];
@@ -114,11 +122,11 @@ public class CameraActivity extends AppCompatActivity {
                 try {
                     ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
                     bindPreview(cameraProvider);
-                }catch (ExecutionException | InterruptedException e){
+                } catch (ExecutionException | InterruptedException e) {
 
                 }
             }
-        },ContextCompat.getMainExecutor(this));
+        }, ContextCompat.getMainExecutor(this));
     }
 
     private boolean allPermissionsGrants() {
