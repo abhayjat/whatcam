@@ -55,7 +55,7 @@ public class RecognitionActivity extends AppCompatActivity {
 
         CustomObjectDetectorOptions options =
                 new CustomObjectDetectorOptions.Builder(localModel)
-                        .setDetectorMode(CustomObjectDetectorOptions.STREAM_MODE)
+                        .setDetectorMode(CustomObjectDetectorOptions.SINGLE_IMAGE_MODE)
                         .enableMultipleObjects()
                         .enableClassification()
                         .setClassificationConfidenceThreshold(0.5f)

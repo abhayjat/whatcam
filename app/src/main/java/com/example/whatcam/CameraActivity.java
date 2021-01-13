@@ -32,7 +32,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class CameraActivity extends AppCompatActivity {
+public class
+CameraActivity extends AppCompatActivity {
     private int REQUEST_CODE_PERMISSIONS = 1000;
     private final String[] REQUEST_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
     private Executor executor = Executors.newSingleThreadExecutor();
